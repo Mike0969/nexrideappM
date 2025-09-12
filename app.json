@@ -7,23 +7,64 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "updates": {
+      "url": "https://u.expo.dev/be09a5e8-b05e-4f20-8949-7132cb3cbe8e"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ertugrulbey.nexrideapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "NexRide needs microphone access for voice booking commands",
+        "NSSpeechRecognitionUsageDescription": "NexRide uses speech recognition for voice booking"
+      }
     },
     "android": {
+      "package": "com.ertugrulbey.nexrideapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDsMySWt0BVIYSIlRIe7kHttKItZbSQFpM"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app needs access to location when open and in the background."
+        }
+      ],
+      [
+        "expo-updates"
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "be09a5e8-b05e-4f20-8949-7132cb3cbe8e"
+      }
     }
   }
 }
