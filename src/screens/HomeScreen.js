@@ -8,13 +8,64 @@ import {
   ScrollView,
   Alert,
   Modal,
-  Platform
+  Platform,
+  Image,
+  Linking
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useApp } from '../context/AppContext';
 import { colors, fonts, spacing, borderRadius } from '../styles/globalStyles';
 import ChipConnectionsBG from '../components/ChipConnectionsBG';
-// import Voice from '@react-native-voice/voice'; // DISABLED for Expo Go testing
+import Svg, { Path, G, Circle } from 'react-native-svg';
+
+// Custom SVG Icons in Blue Neon - 30% Bigger
+const CarIcon = ({ size = 25 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <G fill="none">
+      <Path fill="#4facfe" d="M4.826 9.13h14.348A3.826 3.826 0 0 1 23 12.957v4.782a.957.957 0 0 1-.957.957H1.957A.956.956 0 0 1 1 17.739v-4.783A3.826 3.826 0 0 1 4.826 9.13"/>
+      <Path fill="#00f2fe" d="M22.88 12a3.826 3.826 0 0 0-3.706-2.87H4.827A3.826 3.826 0 0 0 1.12 12z"/>
+      <Path fill="#4facfe" d="m4.348 9.13l.69-4.14A1.91 1.91 0 0 1 6.93 3.392h10.146a1.91 1.91 0 0 1 1.886 1.599l.69 4.14z"/>
+      <Path stroke="#191919" strokeLinecap="round" strokeLinejoin="round" d="M4.826 9.13h14.348A3.826 3.826 0 0 1 23 12.957v4.782a.957.957 0 0 1-.957.957H1.957A.956.956 0 0 1 1 17.739v-4.783A3.826 3.826 0 0 1 4.826 9.13m-.478 0l.69-4.14a1.91 1.91 0 0 1 1.886-1.6h10.15a1.91 1.91 0 0 1 1.887 1.599l.69 4.14" strokeWidth="1"/>
+    </G>
+  </Svg>
+);
+
+const ScheduleIcon = ({ size = 25 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <G fill="none" stroke="#4facfe" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2">
+      <Path d="M9 20H6a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4h11a4 4 0 0 1 4 4v3M8 2v2m7-2v2M2 8h19m-2.5 7.643l-1.5 1.5"/>
+      <Circle cx="17" cy="17" r="5"/>
+    </G>
+  </Svg>
+);
+
+const CarpoolIcon = ({ size = 25 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path fill="#4facfe" d="M8 16c0-2.4 1.1-4.5 2.7-6H3l1.5-4.5h11l.8 2.5c.6 0 1.2.1 1.7.3L16.9 5c-.2-.6-.8-1-1.4-1h-11c-.7 0-1.2.4-1.4 1L1 11v8c0 .5.5 1 1 1h1c.5 0 1-.5 1-1v-1h4.3c-.2-.6-.3-1.3-.3-2m-3.5-1c-.8 0-1.5-.7-1.5-1.5S3.7 12 4.5 12s1.5.7 1.5 1.5S5.3 15 4.5 15M16 20v-2h-3v-1h1c1.1 0 2-.9 2-2v-1c0-1.1-.9-2-2-2h-3v2h3v1h-1c-1.1 0-2 .9-2 2v3m12-3h-2v2h-2v-2h-2v-2h2v-2h2v2h2z"/>
+  </Svg>
+);
+
+const PackageIcon = ({ size = 25 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <G fill="none" stroke="#4facfe" strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" strokeWidth="1">
+      <Path d="M7.5 7.5v10l8 3.5l8-3.5v-10"/>
+      <Path d="m7.5 7.5l8 3.5l8-3.5"/>
+      <Path d="m11.5 5.75l8 3.531V12.5"/>
+      <Path d="m7.5 7.5l8-3.5l8 3.5m-22 6.152l.047.022L5.5 15.5m-3.294-5.022L5.5 12M2.865 7.283L5.5 8.5m10 2.5v10"/>
+    </G>
+  </Svg>
+);
+
+// Crypto Token Icon - Same Size as Cash Icon
+const CryptoIcon = ({ size = 12 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <G fill="none" fillRule="evenodd" clipRule="evenodd">
+      <Path fill="#4facfe" d="M12.062 13.48a6.68 6.68 0 0 0-6.37-2.72A6.64 6.64 0 0 0 .122 17c-.06 1.89.68 4.51 2.38 5.44a.31.31 0 0 0 .46-.087a.31.31 0 0 0-.15-.444c-1.42-.85-2-3.22-1.84-4.84a5.69 5.69 0 0 1 4.87-5.16a5.59 5.59 0 0 1 5.27 2.25c2.77 3.84.36 9-4.94 9.1a6 6 0 0 1-1.35-.14a.35.35 0 0 0-.431.392a.35.35 0 0 0 .261.288a6.3 6.3 0 0 0 1.52.2c6.11.08 9.05-6 5.89-10.52M2.742 6.12a11.4 11.4 0 0 0 1.72-.34a.35.35 0 0 0 0-.5c-.15-.21-.57-.28-.82-.28a.3.3 0 0 0 0-.1c.14-1.4.86-3.08-.21-4.55c-.22-.35-.43-.35-.7-.35c-.54.19-.73.79-.92 1.34c-.12.37.44.78.89-.1c.3 1.04.14 2.76.3 3.76a4 4 0 0 0-.48 0c-1.42 0-1.24-.17-1.52.1c-.08.09-.08.28.16.48a2.85 2.85 0 0 0 1.58.54"/>
+      <Path fill="#00f2fe" d="M7.382 5.86c.453.14.929.188 1.4.14c2.22-.39 2.65-4.09.93-5.51a2.85 2.85 0 0 0-2.94.45A4 4 0 0 0 5.762 4a2.08 2.08 0 0 0 1.62 1.86m.79-4.81c2.36-.45 1.9 3.62.45 3.78a2.9 2.9 0 0 1-1-.12c-1.3-.3-.95-3.37.55-3.66"/>
+      <Path fill="#4facfe" d="M14.422 6.12c.577-.07 1.15-.184 1.71-.34a.35.35 0 0 0 0-.5c-.13-.21-.57-.28-.82-.28a.3.3 0 0 0 0-.1c.13-1.41.85-3.09-.22-4.56c-.21-.34-.44-.34-.69-.34c-.54.17-.76.77-.91 1.32c-.13.37.43.78.88-.1c.26 1 .14 2.75.27 3.71a4 4 0 0 0-.47 0c-1.4 0-1.22-.11-1.47.16c-.08.09-.08.28.16.48a2.9 2.9 0 0 0 1.56.55"/>
+    </G>
+  </Svg>
+);
 
 // Embedded SubscriptionModal Component for HomeScreen
 const SubscriptionModal = ({ visible, onClose, onSelectTier, hasCurrentRide = false }) => {
@@ -178,8 +229,6 @@ export default function HomeScreen({ navigation }) {
     { id: 2, name: 'DIFC', distance: '8.2 km', eta: '12 min', icon: '🏢', basePrice: 8 },
     { id: 3, name: 'Marina', distance: '15.8 km', eta: '18 min', icon: '🌊', basePrice: 16 },
     { id: 4, name: 'Airport', distance: '25.3 km', eta: '28 min', icon: '✈️', basePrice: 28 },
-    { id: 5, name: 'Home', distance: '5.5 km', eta: '8 min', icon: '🏠', basePrice: 6 },
-    { id: 6, name: 'Work', distance: '18.2 km', eta: '22 min', icon: '💼', basePrice: 19 },
   ];
 
   const getDestinationAddress = (name) => {
@@ -208,6 +257,23 @@ export default function HomeScreen({ navigation }) {
 
   const handleWhereToPress = () => {
     navigation.navigate('Destination');
+  };
+
+  const handleServicePress = (serviceType) => {
+    switch(serviceType) {
+      case 'ride':
+        navigation.navigate('Destination');
+        break;
+      case 'reserve':
+        Alert.alert('📅 Reserve Ride', 'Plan your future trips!\n\nComing soon in next update.');
+        break;
+      case 'carpool':
+        Alert.alert('🚌 Smart Carpool', 'Save 70% by sharing rides!\n\n• Eco-friendly travel\n• Meet new people\n• Massive savings\n\nComing soon!');
+        break;
+      case 'package':
+        Alert.alert('📦 Package Delivery', 'Send packages with NexRide drivers!\n\nComing soon in next update.');
+        break;
+    }
   };
 
   const handleFavoritePress = (favorite) => {
@@ -287,6 +353,19 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('UserProfile');
   };
 
+  const handleAdvantagePress = (type) => {
+    if (type === 'ai') {
+      // Link to AI Negotiation MVP page
+      Linking.openURL('https://nex-shuttle.com/ai-negotiation');
+    } else if (type === 'carpool') {
+      // Link to Carpooling MVP page  
+      Linking.openURL('https://nex-shuttle.com/carpooling');
+    } else if (type === 'vr') {
+      // Link to VR Features MVP page
+      Linking.openURL('https://nex-shuttle.com/vr');
+    }
+  };
+
   // DISABLED Voice functions for Expo Go testing
   const handleMicPress = () => {
     Alert.alert('🎤 Voice Feature', 'Voice booking will be available in the next update!');
@@ -306,7 +385,8 @@ export default function HomeScreen({ navigation }) {
         <ChipConnectionsBG tint="#C7CED8" opacity={0.20} style={StyleSheet.absoluteFill} />
 
         <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-          {/* Header */}
+          
+          {/* Header - Unchanged */}
           <View style={styles.header}>
             <View>
               <Text style={styles.greeting}>Good morning!</Text>
@@ -320,19 +400,19 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* Top Wallets Row */}
-          <View style={styles.topWalletsRow}>
+          {/* Wallets - Crypto Icon Same Size as Cash */}
+          <View style={styles.walletsRow}>
             <TouchableOpacity 
-              style={styles.sideWallet}
+              style={styles.walletCard}
               onPress={() => handleWalletPress('nrx')}
             >
-              <Text style={styles.walletIcon}>💰</Text>
+              <CryptoIcon size={12} />
               <Text style={styles.walletLabel}>GFEL</Text>
               <Text style={styles.walletAmount}>{state.nrxBalance}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-              style={styles.sideWallet}
+              style={styles.walletCard}
               onPress={() => handleWalletPress('cash')}
             >
               <Text style={styles.walletIcon}>💳</Text>
@@ -341,7 +421,7 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* Subscription Section */}
+          {/* Subscription - Text Changed */}
           <View style={styles.subscriptionSection}>
             <TouchableOpacity 
               style={styles.subscriptionCard}
@@ -352,14 +432,16 @@ export default function HomeScreen({ navigation }) {
                 style={styles.subscriptionGradient}
               >
                 <Text style={styles.subscriptionIcon}>⭐</Text>
-                <Text style={styles.subscriptionTitle}>SUBSCRIPTION</Text>
-                <Text style={styles.subscriptionSubtitle}>Upgrade to NexRide Pro</Text>
-                <Text style={styles.subscriptionBenefit}>20% off • Priority • AI Boost</Text>
+                <View style={styles.subscriptionContent}>
+                  <Text style={styles.subscriptionTitle}>NexRide Subscription</Text>
+                  <Text style={styles.subscriptionSubtitle}>20% off • Priority • AI Boost</Text>
+                </View>
+                <Text style={styles.subscriptionArrow}>→</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
 
-          {/* Where To Section - Voice disabled for now */}
+          {/* Where To - Unchanged */}
           <View style={styles.whereToSection}>
             <TouchableOpacity style={styles.whereToInput} onPress={handleWhereToPress}>
               <Text style={styles.whereToPlaceholder}>🔍 Where to?</Text>
@@ -367,10 +449,47 @@ export default function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* Quick Destinations */}
-          <View style={styles.quickDestinationsSection}>
-            <Text style={styles.sectionTitle}>QUICK DESTINATIONS</Text>
-            <Text style={styles.sectionSubtitle}>Single tap for ETA • Double tap to book</Text>
+          {/* Service Options - Add Space Below */}
+          <View style={styles.servicesSection}>
+            <View style={styles.servicesRow}>
+              <TouchableOpacity style={styles.serviceCard} onPress={() => handleServicePress('ride')}>
+                <View style={styles.serviceIconContainer}>
+                  <CarIcon size={25} />
+                </View>
+                <Text style={styles.serviceName}>Ride</Text>
+                <Text style={styles.serviceDesc}>Now</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.serviceCard} onPress={() => handleServicePress('reserve')}>
+                <View style={styles.serviceIconContainer}>
+                  <ScheduleIcon size={25} />
+                </View>
+                <Text style={styles.serviceName}>Reserve</Text>
+                <Text style={styles.serviceDesc}></Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.serviceCard} onPress={() => handleServicePress('carpool')}>
+                <View style={[styles.serviceIconContainer, styles.carpoolHighlight]}>
+                  <CarpoolIcon size={25} />
+                </View>
+                <Text style={styles.serviceName}>Carpool</Text>
+                <Text style={[styles.serviceDesc, styles.saveHighlight]}>Save 70%</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.serviceCard} onPress={() => handleServicePress('package')}>
+                <View style={styles.serviceIconContainer}>
+                  <PackageIcon size={25} />
+                </View>
+                <Text style={styles.serviceName}>Package</Text>
+                <Text style={styles.serviceDesc}>Delivery</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Suggestions - Moved Down One Row */}
+          <View style={styles.suggestionsSection}>
+            <Text style={styles.sectionTitle}>SUGGESTIONS</Text>
+            <Text style={styles.sectionSubtitle}>Single tap for info • Double tap to book</Text>
             <View style={styles.destinationsGrid}>
               {favorites.map((favorite) => (
                 <TouchableOpacity 
@@ -394,6 +513,65 @@ export default function HomeScreen({ navigation }) {
               ))}
             </View>
           </View>
+
+          {/* Advantage Images - AI Actually Changed Now! */}
+          <View style={styles.advantagesSection}>
+            <View style={styles.advantagesRowThree}>
+              <TouchableOpacity 
+                style={styles.advantageCardThree}
+                onPress={() => handleAdvantagePress('ai')}
+              >
+                <Image 
+                  source={{ uri: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=300&fit=crop&crop=center' }}
+                  style={styles.advantageImageThree}
+                  resizeMode="cover"
+                />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0, 0, 0, 0.6)']}
+                  style={styles.advantageOverlayThree}
+                >
+                  <Text style={styles.advantageTitleThree}>AI Negotiation</Text>
+                  <Text style={styles.advantageSubtitleThree}>Smart Price</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.advantageCardThree}
+                onPress={() => handleAdvantagePress('carpool')}
+              >
+                <Image 
+                  source={{ uri: 'https://pfst.cf2.poecdn.net/base/image/40798105b95e162072b750eef569606866a693159d212e5d6c0cf7cc66d23c2e?w=309&h=400' }}
+                  style={styles.advantageImageThree}
+                  resizeMode="cover"
+                />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0, 0, 0, 0.6)']}
+                  style={styles.advantageOverlayThree}
+                >
+                  <Text style={styles.advantageTitleThree}>Smart Carpooling</Text>
+                  <Text style={styles.advantageSubtitleThree}>Save 70%</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={styles.advantageCardThree}
+                onPress={() => handleAdvantagePress('vr')}
+              >
+                <Image 
+                  source={{ uri: 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=800&h=300&fit=crop&crop=center' }}
+                  style={styles.advantageImageThree}
+                  resizeMode="cover"
+                />
+                <LinearGradient
+                  colors={['transparent', 'rgba(0, 0, 0, 0.6)']}
+                  style={styles.advantageOverlayThree}
+                >
+                  <Text style={styles.advantageTitleThree}>VR Experience</Text>
+                  <Text style={styles.advantageSubtitleThree}>Entertainment</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          </View>
         </ScrollView>
 
         <SubscriptionModal
@@ -408,134 +586,116 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  gradient: {
-    flex: 1,
-    justifyContent: Platform.OS === 'android' ? 'space-evenly' : 'flex-start',
-    paddingTop: Platform.OS === 'android' ? 25 : 0,
-    paddingBottom: Platform.OS === 'android' ? 25 : 0,
-  },
-  scrollContainer: {
-    flex: 1,
-    paddingBottom: Platform.OS === 'android' ? 30 : 0,
-  },
+  container: { flex: 1 },
+  gradient: { flex: 1 },
+  scrollContainer: { flex: 1 },
+
+  // Header - Unchanged
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingTop: Platform.OS === 'android' ? spacing.sm : spacing.md,
-    paddingBottom: spacing.xs,
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'android' ? 8 : 6,
+    paddingBottom: 4,
   },
   greeting: {
-    fontSize: fonts.sizes.base,
+    fontSize: 16,
     fontFamily: fonts.heading,
     color: '#FFFFFF',
     letterSpacing: 0.3,
   },
   location: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 12,
     color: 'rgba(255, 255, 255, 0.7)',
     fontFamily: fonts.medium,
-    marginTop: 2,
+    marginTop: 1,
   },
   profileButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: 'rgba(255,255,255,0.06)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: 'rgba(199,206,216,0.25)',
   },
-  profileIcon: {
-    fontSize: 16,
-  },
-  
-  topWalletsRow: {
+  profileIcon: { fontSize: 14 },
+
+  // Wallets - Crypto Icon Same Size as Cash
+  walletsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    marginBottom: Platform.OS === 'android' ? spacing.md : spacing.xs,
+    paddingHorizontal: 16,
+    marginBottom: 6,
   },
-  sideWallet: {
-    width: '45%',
+  walletCard: {
+    width: '48%',
     backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: borderRadius.sm,
-    padding: spacing.xs,
+    borderRadius: 8,
+    padding: 7,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'rgba(199,206,216,0.25)',
   },
-  walletIcon: {
-    fontSize: 18,
-    marginBottom: 2,
-  },
+  walletIcon: { fontSize: 12, marginBottom: 2 }, // Same size as crypto icon
   walletLabel: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 8,
     color: 'rgba(255, 255, 255, 0.8)',
     fontFamily: fonts.medium,
+    marginTop: 2,
   },
   walletAmount: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 10,
     color: '#4facfe',
     fontFamily: fonts.bold,
     marginTop: 1,
   },
 
+  // Subscription - Text Changed, Same Size
   subscriptionSection: {
-    paddingHorizontal: spacing.md,
-    marginBottom: Platform.OS === 'android' ? spacing.md : spacing.xs,
+    paddingHorizontal: 16,
+    marginBottom: 6,
   },
   subscriptionCard: {
-    borderRadius: borderRadius.sm,
+    borderRadius: 8,
     overflow: 'hidden',
-    marginBottom: spacing.xs,
   },
   subscriptionGradient: {
-    padding: spacing.xs,
+    flexDirection: 'row',
     alignItems: 'center',
-    minHeight: 80,
-    justifyContent: 'center',
+    padding: 8,
+    minHeight: 40,
   },
-  subscriptionIcon: {
-    fontSize: 24,
-    marginBottom: spacing.xs,
-  },
+  subscriptionIcon: { fontSize: 14, marginRight: 6 },
+  subscriptionContent: { flex: 1 },
   subscriptionTitle: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 11,
     color: '#FFFFFF',
     fontFamily: fonts.bold,
-    textAlign: 'center',
-    letterSpacing: 0.5,
   },
   subscriptionSubtitle: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 9,
     color: 'rgba(255, 255, 255, 0.9)',
     fontFamily: fonts.regular,
-    textAlign: 'center',
-    marginTop: 2,
+    marginTop: 1,
   },
-  subscriptionBenefit: {
-    fontSize: fonts.sizes.xs,
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontFamily: fonts.regular,
-    textAlign: 'center',
-    marginTop: 2,
+  subscriptionArrow: {
+    fontSize: 12,
+    color: '#FFFFFF',
   },
 
+  // Where To - Unchanged
   whereToSection: {
-    paddingHorizontal: spacing.md,
-    marginBottom: Platform.OS === 'android' ? spacing.md : spacing.sm,
+    paddingHorizontal: 16,
+    marginBottom: 6,
   },
   whereToInput: {
     backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: borderRadius.md,
-    paddingVertical: spacing.sm + 2,
-    paddingHorizontal: spacing.md,
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -543,44 +703,91 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(199,206,216,0.25)',
   },
   whereToPlaceholder: {
-    fontSize: fonts.sizes.base,
+    fontSize: 16,
     color: 'rgba(255, 255, 255, 0.8)',
     fontFamily: fonts.medium,
   },
   whereToArrow: {
-    fontSize: fonts.sizes.lg,
+    fontSize: 16,
     color: '#4facfe',
   },
 
-  quickDestinationsSection: {
-    paddingHorizontal: spacing.md,
-    marginBottom: Platform.OS === 'android' ? spacing.lg : spacing.sm,
+  // Service Options - Add Space Below for Suggestions
+  servicesSection: {
+    paddingHorizontal: 16,
+    marginBottom: 12, // Increased to create space for suggestions
+  },
+  servicesRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  serviceCard: {
+    width: '23%',
+    alignItems: 'center',
+    paddingVertical: 7,
+  },
+  serviceIconContainer: {
+    width: 49,
+    height: 49,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(199,206,216,0.25)',
+  },
+  carpoolHighlight: {
+    backgroundColor: 'rgba(0, 200, 81, 0.15)',
+    borderColor: 'rgba(0, 200, 81, 0.3)',
+  },
+  serviceName: {
+    fontSize: 9.5,
+    fontFamily: fonts.bold,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 1,
+  },
+  serviceDesc: {
+    fontSize: 8,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontFamily: fonts.regular,
+    textAlign: 'center',
+  },
+  saveHighlight: {
+    color: '#00c851',
+    fontFamily: fonts.bold,
+  },
+
+  // Suggestions - One Row Down
+  suggestionsSection: {
+    paddingHorizontal: 16,
+    marginBottom: 6,
   },
   sectionTitle: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 10,
     fontFamily: fonts.bold,
     color: '#FFFFFF',
     marginBottom: 2,
     letterSpacing: 0.6,
   },
   sectionSubtitle: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 8,
     color: 'rgba(255, 255, 255, 0.6)',
     fontFamily: fonts.regular,
-    marginBottom: spacing.xs,
+    marginBottom: 6,
   },
   destinationsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
   destinationCard: {
-    width: '31%',
+    width: '23%',
     backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: borderRadius.xs,
-    padding: spacing.xs,
+    borderRadius: 8,
+    padding: 5,
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: 6,
     borderWidth: 1,
     borderColor: 'rgba(199,206,216,0.25)',
     position: 'relative',
@@ -590,30 +797,27 @@ const styles = StyleSheet.create({
     borderColor: '#4facfe',
     transform: [{ scale: 0.98 }],
   },
-  destinationIcon: {
-    fontSize: 16,
-    marginBottom: 2,
-  },
+  destinationIcon: { fontSize: 8, marginBottom: 2 },
   destinationName: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 7,
     color: '#FFFFFF',
     fontFamily: fonts.medium,
     textAlign: 'center',
+    marginBottom: 1,
   },
   destinationEta: {
-    fontSize: fonts.sizes.xs,
+    fontSize: 6,
     color: '#4facfe',
-    marginTop: 1,
     fontFamily: fonts.bold,
   },
   
   tapIndicator: {
     position: 'absolute',
-    top: -5,
-    right: -5,
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    top: -3,
+    right: -3,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: '#4facfe',
     alignItems: 'center',
     justifyContent: 'center',
@@ -621,13 +825,60 @@ const styles = StyleSheet.create({
     borderColor: '#FFFFFF',
   },
   tapIndicatorText: {
-    fontSize: 10,
+    fontSize: 6,
     color: '#FFFFFF',
     fontFamily: fonts.bold,
   },
+
+  // Images - ALL Same Height & Clarity
+  advantagesSection: {
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  advantagesRowThree: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  advantageCardThree: {
+    width: '32%',
+    height: 100, // SAME HEIGHT for all three images
+    borderRadius: 12,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  advantageImageThree: {
+    width: '100%',
+    height: '100%',
+    opacity: 1.0, // SAME CLARITY for all three images
+  },
+  advantageOverlayThree: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 6,
+    paddingVertical: 6,
+  },
+  advantageTitleThree: {
+    fontSize: 8,
+    fontFamily: fonts.bold,
+    color: '#FFFFFF',
+    marginBottom: 1,
+    textShadowColor: 'rgba(0, 0, 0, 1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  advantageSubtitleThree: {
+    fontSize: 7,
+    color: '#4facfe',
+    fontFamily: fonts.regular,
+    textShadowColor: 'rgba(0, 0, 0, 1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
 });
 
-// Subscription Modal Styles
+// Subscription Modal Styles (Keep Same)
 const subscriptionModalStyles = StyleSheet.create({
   overlay: {
     flex: 1,

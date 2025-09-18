@@ -10,9 +10,8 @@
     "updates": {
       "url": "https://u.expo.dev/be09a5e8-b05e-4f20-8949-7132cb3cbe8e"
     },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
+    "sdkVersion": "54.0.0",
+    "runtimeVersion": "1.0.0",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -59,7 +58,8 @@
       ],
       [
         "expo-updates"
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
